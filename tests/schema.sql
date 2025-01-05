@@ -1,0 +1,5 @@
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    fk TEXT NOT NULL,
+    text TEXT NOT NULL
+)

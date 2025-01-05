@@ -1,0 +1,21 @@
+{
+  "name": "sqlrc",
+  "author": "gh@readyyyk",
+  "bin": {
+    "sqlrc": "./src/bin/bin.ts"
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sql"
+  ],
+  "license": "BSD 2-Clause License",
+  "dependencies": {
+    "commander": "^13.0.0"
+  }
+}
