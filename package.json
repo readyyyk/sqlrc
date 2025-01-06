@@ -9,7 +9,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./src/index.js --cfg ./tests/config.json"
   },
   "keywords": [
     "sql"
@@ -17,5 +17,8 @@
   "license": "BSD 2-Clause License",
   "dependencies": {
     "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5"
   }
 }

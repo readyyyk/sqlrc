@@ -1,6 +1,6 @@
 {
   "schema": "schema.sql",
-  "files": ["user.sql"],
+  "queries": ["user.sql"],
   "remove_trailing_s": true,
   "pakage": {
     "name": "gen",
