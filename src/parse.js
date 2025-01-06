@@ -1,9 +1,17 @@
 // @ts-check
 
+import {
+  ALLOWED_QUERY_RETURN_TYPES,
+  ALLOWED_SQL_COLUMN_TYPES,
+  isALLOWED_QUERY_RETURN_TYPES,
+  isALLOWED_SQL_COLUMN_TYPES,
+} from "./types.js";
+
+/** @typedef {import("./types.js").ColumnToken} ColumnToken */
+/** @typedef {import("./types.js").QueryToken} QueryToken */
+
 const SQL_COMMENT_TOKEN = "--@";
 const SQL_DELITMER_TOKEN = ";";
-const ALLOWED_QUERY_RETURN_TYPES = Object.freeze(["one", "many", "exec"]);
-/** @typedef {{sql: string, name: string, type: "many" | "one" | "exec"}} QueryToken */
 /**
  * @throws
  * @param {string} sqlcode
@@ -35,7 +43,7 @@ export const parseQuery = (sqlcode) => {
       .filter(Boolean)
       .join("\n");
     const [_, name, type] = head.split(":");
-    if (!ALLOWED_QUERY_RETURN_TYPES.includes(type)) {
+    if (!isALLOWED_QUERY_RETURN_TYPES(type)) {
       throw new Error(
         "Invalid query return type. \nGot: " +
           type +
@@ -43,7 +51,6 @@ export const parseQuery = (sqlcode) => {
           JSON.stringify(ALLOWED_QUERY_RETURN_TYPES),
       );
     }
-    // @ts-expect-error {type} variable checked in if-statement above
     result.push({ sql, name, type });
   }
   return result;
@@ -52,8 +59,6 @@ export const parseQuery = (sqlcode) => {
 const SQL_TABLE_DELITMER = "CREATE";
 const SQL_TABLE_NAME_REGEX = /(TABLE|table) +(\S+) +\S/g;
 const SQL_TABLE_NAME_REGEX_GROUP_INDEX = 2;
-const ALLOWED_SQL_COLUMN_TYPES = Object.freeze(["TEXT", "INTEGER"]);
-/** @typedef {{name: string, type: "TEXT" | "INTEGER"}} ColumnToken */
 /**
  * @param {string} sqlcode
  * @returns {Record<string, ColumnToken[]>} Go <StructureName, <FieldName, FieldType>>
@@ -88,7 +93,7 @@ export const parseSchema = (sqlcode) => {
           console.warn(
             "[WARN]: Nullable field found. NULL state is not handled in output code. Read github.com/re-worthy/sqlrc",
           );
-        if (!ALLOWED_SQL_COLUMN_TYPES.includes(type)) {
+        if (!isALLOWED_SQL_COLUMN_TYPES(type)) {
           throw new Error(
             "Unsupported column type. \nGot: " +
               type +
@@ -105,7 +110,6 @@ export const parseSchema = (sqlcode) => {
   for (let i = 0; i < tableNames.length; i++) {
     const tName = tableNames[i];
     const tokens = tablesFields[i];
-    // @ts-expect-error tokens are checked during table fields resolution
     result[tName] = tokens;
   }
   return result;

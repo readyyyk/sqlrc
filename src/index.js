@@ -1,7 +1,9 @@
 // @ts-check
 import { Command } from "commander";
-import { getCodes } from "./fs.js";
+import { getCodes, getConfig, writeSchema } from "./fs.js";
 import { parseQuery, parseSchema } from "./parse.js";
+import { generateSchema } from "./generate.js";
+import path from "node:path";
 const program = new Command();
 
 program
@@ -10,13 +12,21 @@ program
   .requiredOption("--cfg <string>", "Path to config")
   .action((options) => {
     try {
-      const codes = getCodes(process.cwd(), options.cfg);
+      const cfgPath = path.resolve(process.cwd(), options.cfg);
+      const workDir = path.dirname(cfgPath);
 
-      const x = codes.queries.map((q) => parseQuery(q));
-      const x1 = parseSchema(codes.schame);
+      const config = getConfig(cfgPath);
 
-      console.log(x);
-      console.log(x1);
+      const codes = getCodes(config, workDir);
+
+      const queryTokens = codes.queries.map((q) => parseQuery(q));
+      const schemaTokens = parseSchema(codes.schame);
+
+      const schemaContent = generateSchema(schemaTokens, config.pakage.name, config.remove_trailing_s);
+
+      const schemaPath = path.resolve(workDir, config.pakage.path, "schema.go");
+      writeSchema(schemaContent, schemaPath);
+      console.log("✅ Wrote schema to "+schemaPath)
     } catch (e) {
       console.error(e);
       process.exit(1);
