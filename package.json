@@ -1,11 +1,11 @@
 {
   "name": "sqlrc",
+  "version": "0.1.1",
   "author": "gh@readyyyk",
   "bin": {
     "sqlrc": "./src/bin/bin.ts"
   },
   "type": "module",
-  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {

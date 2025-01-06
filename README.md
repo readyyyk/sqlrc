@@ -4,6 +4,7 @@
 
 - [ ] joins
 - [ ] select aliases
+- [ ] generated file warranty
 
 ## Limitations
 
