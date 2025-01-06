@@ -57,7 +57,7 @@ export const parseQuery = (sqlcode) => {
 };
 
 const SQL_TABLE_DELITMER = "CREATE";
-const SQL_TABLE_NAME_REGEX = /(TABLE|table) +(\S+) +\S/g;
+const SQL_TABLE_NAME_REGEX = /(TABLE|table)\s+(\w+)/g;
 const SQL_TABLE_NAME_REGEX_GROUP_INDEX = 2;
 /**
  * @param {string} sqlcode
@@ -65,25 +65,38 @@ const SQL_TABLE_NAME_REGEX_GROUP_INDEX = 2;
  */
 export const parseSchema = (sqlcode) => {
   const tableDeclarations = sqlcode
+    .replaceAll(/--[^\n]*\n/g, "\n")
     .split(SQL_TABLE_DELITMER)
     .map((a) => a.trim())
     .filter(Boolean);
 
   const tableNames = tableDeclarations
-    .map((a) => SQL_TABLE_NAME_REGEX.exec(a))
-    .map((m) => {
+    .map((a) => {
+      const res = SQL_TABLE_NAME_REGEX.exec(a);
+      SQL_TABLE_NAME_REGEX.lastIndex = 0;
+      return res;
+    })
+    .map((m, i) => {
       if (m === null) {
-        throw new Error("Cant find table name");
+        throw new Error(
+          "Cant find table name in declaration: \n" + tableDeclarations[i],
+        );
       }
       return m[SQL_TABLE_NAME_REGEX_GROUP_INDEX];
     });
 
   const tablesFields = tableDeclarations.map((declaration) =>
     declaration
-      .split("(")[1]
-      .split(")")[0]
-      .split(",")
+      .split("(")
+      .slice(1)
+      .join("(")
+      // ^ take everything after first "(" and return removed "("
+      .split(/\)[^\)]*;$/)[0]
+      // ^ take everything before last ")"+{all symbols that are not ")"}+";"
+      .split(/, *\n/)
+      // ^ split by comma+trailing spaces if they exis+\n
       .map((field) => field.trim())
+      .filter(Boolean)
       .map((field) => {
         const name = field.split(" ")[0];
         const type = field.split(" ")[1];
