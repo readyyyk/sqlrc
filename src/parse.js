@@ -1,14 +1,18 @@
 // @ts-check
 
 import {
+  ALLOWED_OWN_TYPES,
   ALLOWED_QUERY_RETURN_TYPES,
   ALLOWED_SQL_COLUMN_TYPES,
+  isALLOWED_OWN_TYPES,
   isALLOWED_QUERY_RETURN_TYPES,
   isALLOWED_SQL_COLUMN_TYPES,
 } from "./types.js";
 
+/** @typedef {import("./types.js").ParamedQuery} ParamedQuery */
 /** @typedef {import("./types.js").ColumnToken} ColumnToken */
 /** @typedef {import("./types.js").QueryToken} QueryToken */
+/** @typedef {import("./types.js").OwnType} OwnType */
 
 const SQL_COMMENT_TOKEN = "--@";
 const SQL_DELITMER_TOKEN = ";";
@@ -127,3 +131,52 @@ export const parseSchema = (sqlcode) => {
   }
   return result;
 };
+
+
+
+const PARAM_REGEX = /(\<\@)([^:]+):([^\@]+)(\@\>)/g
+const NAME_GROUP_IDX = 2;
+const TYPE_GROUP_IDX = 3;
+/**
+ * @param {QueryToken} queryToken
+ * @returns {ParamedQuery}
+ */
+export const parseQueryParams = (queryToken) => {
+  /** @type {ParamedQuery} */
+  const result = {
+    queryToken,
+    params: {},
+    resultSql: '',
+  }
+
+  result.resultSql = queryToken.sql.replaceAll(PARAM_REGEX, '?');
+  
+  const matches = result.queryToken.sql.matchAll(PARAM_REGEX);
+  let i=0;
+  for (const match of matches) {
+    const name = match[NAME_GROUP_IDX];
+    const _type = match[TYPE_GROUP_IDX];
+
+    if (!isALLOWED_OWN_TYPES(_type)) {
+      throw new Error(
+        "Invalid own type. \nGot: " +
+          _type +
+          "\nAllowed are: " +
+          JSON.stringify(ALLOWED_OWN_TYPES),
+      );
+    }
+
+    result.params[name] = {
+      name,
+      type: _type,
+      positions: result.params[name]?.positions
+        ? result.params[name].positions.concat(i)
+        : [i],
+    }
+
+    i++;
+  }
+
+  return result;
+}
+

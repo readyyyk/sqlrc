@@ -2,8 +2,10 @@
 
 import { sqlToGoTypes } from "./types.js";
 
+/** @typedef {import("./types.js").ParamedQuery} ParamedQuery */
 /** @typedef {import("./types.js").ColumnToken} ColumnToken */
 /** @typedef {import("./types.js").QueryToken} QueryToken */
+/** @typedef {import("./types.js").OwnType} OwnType */
 
 
 /** @param {string} a*/
@@ -45,3 +47,15 @@ type Queries struct {
 
   return result;
 };
+
+/**
+ * @param {ParamedQuery[]} paramedQueries 
+ * @returns {string}
+ */
+export const generateQuery = (paramedQueries) => {
+  let result = "";
+  for(const query of paramedQueries) {
+    
+  }
+  return result; 
+}
