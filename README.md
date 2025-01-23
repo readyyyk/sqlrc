@@ -5,6 +5,7 @@
 - [ ] joins
 - [ ] select aliases
 - [ ] generated file warranty
+- [ ] capitalized params warranty
 
 ## Limitations
 

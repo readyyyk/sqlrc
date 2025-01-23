@@ -93,3 +93,8 @@ export const isALLOWED_OWN_TYPES = (toCheck) => {
   return ALLOWED_OWN_TYPES.includes(toCheck);
 }
 
+/** @type {Record<OwnType, GoType>} */
+export const ownToGoTypes = {
+  string: "string",
+  int: "int",
+};

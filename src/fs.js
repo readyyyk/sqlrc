@@ -35,13 +35,13 @@ export const getCodes = (cfg, cfgDir) => {
 };
 
 /**
- * @param {string} schemaContent 
+ * @param {string} content 
  * @param {string} to 
  */
-export const writeSchema = (schemaContent, to) => {
+export const write = (content, to) => {
   if (!fs.existsSync(to)){
     fs.mkdirSync(path.dirname(to), { recursive: true });
   }
-  fs.writeFileSync(to, schemaContent);
+  fs.writeFileSync(to, content);
 }
 
