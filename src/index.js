@@ -5,6 +5,8 @@ import { getCodes, getConfig, write } from "./fs.js";
 import { parseQuery, parseQueryParams, parseSchema } from "./parse.js";
 import { generateQueryFile, generateSchema } from "./generate.js";
 import path from "node:path";
+
+
 const program = new Command();
 
 program
@@ -26,13 +28,27 @@ program
       write(schemaContent, schemaPath);
       console.log("✅ Wrote schema to "+schemaPath)
 
-      const queryTokens = codes.queries.map((q) => parseQuery(q));
-      const queriesWParams = queryTokens[0].map(q => parseQueryParams(q));  // TODO replace w multi queries
-      const queryContent = generateQueryFile(queriesWParams, config.pakage.name);
-      const queryPath = path.resolve(workDir, config.pakage.path, "query.go"); // TODO replace w actual names
-      write(queryContent, queryPath);
-      console.log("✅ Wrote query to "+schemaPath)
+      const querySetsTokens = codes.queries.map((q) => parseQuery(q));
+      const queriesSetsWParams = querySetsTokens.map(
+        qs =>
+           qs.map(q => parseQueryParams(q)
+        )
+      );
 
+      /*
+      console.log(
+          sqlP.sql2ast(
+            queriesWParams[4].resultSql.replaceAll("?", '"?"').replace(/RETURNING.+/, "").trim()
+          ).value
+      );
+      */
+
+      const querySetsContent = queriesSetsWParams.map(
+        qsWParams => generateQueryFile(qsWParams, config.pakage.name)
+      );
+      const queryPath = path.resolve(workDir, config.pakage.path, "query.go"); // TODO replace w actual names
+      write(querySetsContent[0], queryPath);
+      console.log("✅ Wrote query to "+schemaPath)
     } catch (e) {
       console.error(e);
       process.exit(1);

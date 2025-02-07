@@ -107,3 +107,45 @@ func (q *Queries) GetMany(ctx context.Context, arg GetManyParams) (*[]TO_BE_DONE
 	}
 	return &items, nil
 }
+
+
+
+// GetJoin
+const GetJoinSql = `
+SELECT u.*, f.*
+FROM users u
+LEFT JOIN friends f
+ON f.id = u.id
+where u.username = ?
+`
+
+type GetJoinParams struct {
+Username string
+}
+
+func (q *Queries) GetJoin(ctx context.Context, arg GetJoinParams) (*[]TO_BE_DONE, error) {
+  rows, err := q.DB.QueryContext(ctx, GetJoinSql, arg.Username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TO_BE_DONE
+	for rows.Next() {
+		var i TO_BE_DONE
+		if err := rows.Scan(
+			&i.Id,
+			&i.Fk,
+			&i.Text,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return &items, nil
+}

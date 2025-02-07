@@ -16,7 +16,8 @@
   ],
   "license": "BSD 2-Clause License",
   "dependencies": {
-    "commander": "^13.0.0"
+    "commander": "^13.0.0",
+    "simple-sql-parser": "2.0.0-alpha.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.5"

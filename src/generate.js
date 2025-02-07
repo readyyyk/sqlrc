@@ -54,7 +54,7 @@ type Queries struct {
  * @param {string} paramsName
  * @returns {string}
  */
-const generateReturnOneFunction = (query, sqlName, paramsName) => {
+const generateReturnOne = (query, sqlName, paramsName) => {
   let result = "";
   /** @type {string[]} */
   const goParams = Object.entries(query.params)
@@ -80,13 +80,26 @@ func (q *Queries) ${functionName}(ctx context.Context, arg ${paramsName}) (*TO_B
 }`
   return result;
 }
+
 /**
  * @param {ParamedQuery} query
  * @param {string} sqlName
  * @param {string} paramsName
  * @returns {string}
  */
-const generateReturnManyFunction = (query, sqlName, paramsName) => {
+const generateExec = (query, sqlName, paramsName) => {
+  throw new Error("Not implemented")
+}
+
+
+
+/**
+ * @param {ParamedQuery} query
+ * @param {string} sqlName
+ * @param {string} paramsName
+ * @returns {string}
+ */
+const generateReturnMany = (query, sqlName, paramsName) => {
   let result = "";
   /** @type {string[]} */
   const goParams = Object.entries(query.params)
@@ -130,7 +143,6 @@ func (q *Queries) ${functionName}(ctx context.Context, arg ${paramsName}) (*[]TO
   return result;
 }
 
-
 /**
  * @param {string} packageName
  * @param {ParamedQuery[]} paramedQueries 
@@ -154,13 +166,13 @@ import (
     
     switch (query.queryToken.type) {
       case "many":
-        result += generateReturnManyFunction(query, sqlName, paramsName);
+        result += generateReturnMany(query, sqlName, paramsName);
         break;
       case "one":
-        result += generateReturnOneFunction(query, sqlName, paramsName);
+        result += generateReturnOne(query, sqlName, paramsName);
         break;
       case "exec":
-        throw new Error("Not implemented")
+        result += generateExec(query, sqlName, paramsName);
         break;
       default:
         throw new Error("Got invalid query return type (for sqlrc)")

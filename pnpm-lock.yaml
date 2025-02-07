@@ -3,9 +3,11 @@ lockfileVersion: 5.4
 specifiers:
   '@types/node': ^22.10.5
   commander: ^13.0.0
+  simple-sql-parser: 2.0.0-alpha.1
 
 dependencies:
   commander: 13.0.0
+  simple-sql-parser: 2.0.0-alpha.1
 
 devDependencies:
   '@types/node': 22.10.5
@@ -21,6 +23,22 @@ packages:
   /commander/13.0.0:
     resolution: {integrity: sha512-oPYleIY8wmTVzkvQq10AEok6YcTC4sRUBl8F9gVuwchGVUCTbl/vhLTaQqutuuySYOsu8YTgV+OxKc/8Yvx+mQ==}
     engines: {node: '>=18'}
+    dev: false
+
+  /parsimmon/0.7.0:
+    resolution: {integrity: sha512-N+Dg2k/8OeCecfmYCemGXA5GDfr2UrK1FYm0K26oL6wiU57ORCiItfP43vK+5aTJBRdkegYfoOQdyOsOBaSQ/Q==}
+    dependencies:
+      pjs: 5.1.2
+    dev: false
+
+  /pjs/5.1.2:
+    resolution: {integrity: sha512-aoPrjtnYOknat/wiO5hyCkub7LymxSY1BN8gIsW49PfbdPyQiaU+UOo9DfSEhhl48cWLd28IwpERutBveLdQLA==}
+    dev: false
+
+  /simple-sql-parser/2.0.0-alpha.1:
+    resolution: {integrity: sha512-y+Hqc353ncI6xSm+cZhMQQepec8/byRAr21iosqvCTq45SA+Fc60NhSfdMTdfxF2XfNKxRO8RwiPBJu4hmaacQ==}
+    dependencies:
+      parsimmon: 0.7.0
     dev: false
 
   /undici-types/6.20.0:
