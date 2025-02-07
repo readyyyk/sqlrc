@@ -1,23 +1,16 @@
-// @ts-check
+import {
+  ownToGoTypes,
+  sqlToGoTypes,
+  type ParamedQuery, 
+  type ColumnToken,
+} from "./types.ts";
 
-import { ownToGoTypes, sqlToGoTypes } from "./types.js";
+const capitalize = (a: string) => a[0].toUpperCase() + a.slice(1); 
 
-/** @typedef {import("./types.js").ParamedQuery} ParamedQuery */
-/** @typedef {import("./types.js").ColumnToken} ColumnToken */
-/** @typedef {import("./types.js").QueryToken} QueryToken */
-/** @typedef {import("./types.js").OwnType} OwnType */
+type TGenerateFunc = (query: ParamedQuery, sqlName: string, paramsName: string) => string
 
-
-/** @param {string} a*/
-const capitalize = (a) => a[0].toUpperCase() + a.slice(1); 
-
-/**
- * @param {string} packageName
- * @param {Record<string, ColumnToken[]>} tokens
- * @param {Boolean} removeTrailingS
- * @returns {string}
- */
-export const generateSchema = (tokens, packageName, removeTrailingS) => {
+type TGenerateSchema = (tokens: Record<string, ColumnToken[]>, packageName: string, removeTrailingS: boolean) => string;
+export const generateSchema: TGenerateSchema = (tokens, packageName, removeTrailingS) => {
   let result = `package ${packageName}
 
 import "database/sql"
@@ -48,13 +41,8 @@ type Queries struct {
   return result;
 };
 
-/**
- * @param {ParamedQuery} query
- * @param {string} sqlName
- * @param {string} paramsName
- * @returns {string}
- */
-const generateReturnOne = (query, sqlName, paramsName) => {
+
+const generateReturnOne: TGenerateFunc = (query, sqlName, paramsName) => {
   let result = "";
   /** @type {string[]} */
   const goParams = Object.entries(query.params)
@@ -81,35 +69,19 @@ func (q *Queries) ${functionName}(ctx context.Context, arg ${paramsName}) (*TO_B
   return result;
 }
 
-/**
- * @param {ParamedQuery} query
- * @param {string} sqlName
- * @param {string} paramsName
- * @returns {string}
- */
-const generateExec = (query, sqlName, paramsName) => {
+const generateExec: TGenerateFunc = (query, sqlName, paramsName) => {
   throw new Error("Not implemented")
 }
 
-
-
-/**
- * @param {ParamedQuery} query
- * @param {string} sqlName
- * @param {string} paramsName
- * @returns {string}
- */
-const generateReturnMany = (query, sqlName, paramsName) => {
+const generateReturnMany: TGenerateFunc = (query, sqlName, paramsName) => {
   let result = "";
-  /** @type {string[]} */
   const goParams = Object.entries(query.params)
       .reduce((acc, [name, p]) => {
         for (const pos of p.positions) {
-          // @ts-expect-error in this case string Is assignable to never
           acc[pos] = name;
         }
         return acc;
-      }, []);
+      }, [] as string[]);
     const completeGoParams = goParams.map(p=>"arg."+capitalize(p)).join(', ');
     const functionName = capitalize(query.queryToken.name);
     result += `\n
@@ -143,12 +115,7 @@ func (q *Queries) ${functionName}(ctx context.Context, arg ${paramsName}) (*[]TO
   return result;
 }
 
-/**
- * @param {string} packageName
- * @param {ParamedQuery[]} paramedQueries 
- * @returns {string}
- */
-export const generateQueryFile = (paramedQueries, packageName) => {
+export const generateQueryFile = (paramedQueries: ParamedQuery[], packageName: string): string => {
   let result = `package ${packageName}
 
 import (

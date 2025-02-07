@@ -2,27 +2,17 @@
 import fs from "node:fs";
 import path from "node:path";
 
-/** @typedef {import("./types.js").TConfig} TConfig */
+import {type TConfig} from './types.ts';
 
-/**
- * @throws
- * @param {string} cfgPath
- * @returns {TConfig}
- */
-export const getConfig = (cfgPath) => {
+export const getConfig = (cfgPath: string): TConfig => {
   const configContent = fs.readFileSync(cfgPath, "utf-8");
   const data = JSON.parse(configContent);
   // WARNING no type-checking. Probably need to add validation
   return data;
 };
 
-/**
- * @param {TConfig} cfg
- * @param {string} cfgDir
- * */
-export const getCodes = (cfg, cfgDir) => {
+export const getCodes = (cfg: TConfig, cfgDir: string) => {
   const schemaCodePath = path.resolve(cfgDir, cfg.schema);
-  /**@type {string[]}*/
   const queriesCodePaths = cfg.queries.map((a) => path.resolve(cfgDir, a));
 
   const schemaCode = fs.readFileSync(schemaCodePath, "utf-8");
@@ -34,11 +24,7 @@ export const getCodes = (cfg, cfgDir) => {
   };
 };
 
-/**
- * @param {string} content 
- * @param {string} to 
- */
-export const write = (content, to) => {
+export const write = (content: string, to: string) => {
   if (!fs.existsSync(to)){
     fs.mkdirSync(path.dirname(to), { recursive: true });
   }

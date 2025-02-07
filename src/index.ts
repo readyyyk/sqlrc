@@ -1,5 +1,4 @@
 #! /usr/bin/env node
-// @ts-check
 import { Command } from "commander";
 import { getCodes, getConfig, write } from "./fs.js";
 import { parseQuery, parseQueryParams, parseSchema } from "./parse.js";

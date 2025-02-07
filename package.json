@@ -3,13 +3,17 @@
   "version": "0.1.3",
   "author": "gh@readyyyk",
   "bin": {
-    "sqlrc": "./src/index.js"
+    "sqlrc": "./bin/dist.cjs"
+  },
+  "engines": {
+    "pnpm": "*"
   },
   "type": "module",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "node ./src/index.js --cfg ./tests/config.json"
+    "test:ts": "tsx ./src/index.ts --cfg ./tests/config.json",
+    "test:js": "pnpm run build && ./bin/dist.cjs --cfg ./tests/config.json",
+    "build": "./node_modules/.bin/esbuild ./src/index.ts --outfile=./bin/dist.cjs --bundle --minify --platform=node --banner:js='// by @readyyyk'"
   },
   "keywords": [
     "sql"
@@ -20,6 +24,8 @@
     "simple-sql-parser": "2.0.0-alpha.1"
   },
   "devDependencies": {
-    "@types/node": "^22.10.5"
+    "@types/node": "^20",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.3"
   }
 }

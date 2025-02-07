@@ -1,5 +1,3 @@
-// @ts-check
-
 import {
   ALLOWED_OWN_TYPES,
   ALLOWED_QUERY_RETURN_TYPES,
@@ -7,21 +5,16 @@ import {
   isALLOWED_OWN_TYPES,
   isALLOWED_QUERY_RETURN_TYPES,
   isALLOWED_SQL_COLUMN_TYPES,
-} from "./types.js";
-
-/** @typedef {import("./types.js").ParamedQuery} ParamedQuery */
-/** @typedef {import("./types.js").ColumnToken} ColumnToken */
-/** @typedef {import("./types.js").QueryToken} QueryToken */
-/** @typedef {import("./types.js").OwnType} OwnType */
+  type ParamedQuery,
+  type ColumnToken,
+  type QueryToken,
+  type OwnType,
+} from "./types.ts";
 
 const SQL_COMMENT_TOKEN = "--@";
 const SQL_DELITMER_TOKEN = ";";
-/**
- * @throws
- * @param {string} sqlcode
- * @returns {QueryToken[]}
- */
-export const parseQuery = (sqlcode) => {
+
+export const parseQuery = (sqlcode: string): QueryToken[] => {
   const parts = sqlcode
     .split(SQL_COMMENT_TOKEN)
     .map((a) => a.trim())
@@ -38,8 +31,7 @@ export const parseQuery = (sqlcode) => {
     );
   }
 
-  /** @type {QueryToken[]} */
-  const result = [];
+  const result = [] as QueryToken[];
   for (const query of sqlParts) {
     const [head, ...rest] = query.split("\n");
     const sql = rest
@@ -63,11 +55,9 @@ export const parseQuery = (sqlcode) => {
 const SQL_TABLE_DELITMER = "CREATE";
 const SQL_TABLE_NAME_REGEX = /(TABLE|table)\s+(\w+)/g;
 const SQL_TABLE_NAME_REGEX_GROUP_INDEX = 2;
-/**
- * @param {string} sqlcode
- * @returns {Record<string, ColumnToken[]>} Go <StructureName, <FieldName, FieldType>>
- */
-export const parseSchema = (sqlcode) => {
+
+/** @returns Go <StructureName, <FieldName, FieldType>> */
+export const parseSchema = (sqlcode: string): Record<string, ColumnToken[]> => {
   const tableDeclarations = sqlcode
     .replaceAll(/--[^\n]*\n/g, "\n")
     .split(SQL_TABLE_DELITMER)
@@ -123,7 +113,7 @@ export const parseSchema = (sqlcode) => {
   );
 
   /** @type {Record<string, ColumnToken[]>}  */
-  const result = {};
+  const result: Record<string, ColumnToken[]> = {};
   for (let i = 0; i < tableNames.length; i++) {
     const tName = tableNames[i];
     const tokens = tablesFields[i];
@@ -137,13 +127,10 @@ export const parseSchema = (sqlcode) => {
 const PARAM_REGEX = /(\<\@)([^:]+):([^\@]+)(\@\>)/g
 const NAME_GROUP_IDX = 2;
 const TYPE_GROUP_IDX = 3;
-/**
- * @param {QueryToken} queryToken
- * @returns {ParamedQuery}
- */
-export const parseQueryParams = (queryToken) => {
+
+export const parseQueryParams = (queryToken: QueryToken): ParamedQuery => {
   /** @type {ParamedQuery} */
-  const result = {
+  const result: ParamedQuery = {
     queryToken,
     params: {},
     resultSql: '',
@@ -179,4 +166,3 @@ export const parseQueryParams = (queryToken) => {
 
   return result;
 }
-
