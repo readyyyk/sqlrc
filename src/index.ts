@@ -1,10 +1,9 @@
 #! /usr/bin/env node
 import { Command } from "commander";
-import { getCodes, getConfig, write } from "./fs.js";
-import { parseQuery, parseQueryParams, parseSchema } from "./parse.js";
-import { generateQueryFile, generateSchema } from "./generate.js";
+import { getCodes, getConfig, write } from "./fs.ts";
+import { parseQuery, parseQueryParams, parseSchema, parseResolveResult } from "./parse.ts";
+import { generateQueryFile, generateSchema } from "./generate";
 import path from "node:path";
-
 
 const program = new Command();
 
@@ -28,21 +27,10 @@ program
       console.log("✅ Wrote schema to "+schemaPath)
 
       const querySetsTokens = codes.queries.map((q) => parseQuery(q));
-      const queriesSetsWParams = querySetsTokens.map(
-        qs =>
-           qs.map(q => parseQueryParams(q)
-        )
-      );
+      const queriesSetsWParams = querySetsTokens.map(qs => qs.map(parseQueryParams));
+      const qsWResolvedResult = queriesSetsWParams.map(qs=>qs.map(parseResolveResult))
 
-      /*
-      console.log(
-          sqlP.sql2ast(
-            queriesWParams[4].resultSql.replaceAll("?", '"?"').replace(/RETURNING.+/, "").trim()
-          ).value
-      );
-      */
-
-      const querySetsContent = queriesSetsWParams.map(
+      const querySetsContent = qsWResolvedResult.map(
         qsWParams => generateQueryFile(qsWParams, config.pakage.name)
       );
       const queryPath = path.resolve(workDir, config.pakage.path, "query.go"); // TODO replace w actual names
