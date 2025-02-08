@@ -15,14 +15,14 @@ SELECT * FROM users WHERE id < <@id:int@>;
 
 --@ sqlrc:GetJoin:many
 SELECT u.*, f.*
-FROM users u
+FROM users as u
 LEFT JOIN friends f
 ON f.id = u.id
 where u.username = <@username:string@>;
 
 --@ sqlrc:GetWorthy:one
 SELECT t1.*, tg.texT
-FROM transactions t1
+FROM transactions as t1
   LEFT JOIN tags tg ON tg.transaction_id = t1.id
 WHERE
   t1.owner_id = <@user_id:string@>
@@ -85,7 +85,7 @@ SELECT
     --     ELSE 'Below Average'
     -- END AS salary_comparison,
     -- RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS dept_salary_rank
-FROM employees e
+FROM employees as e
 JOIN departments d ON e.department_id = d.id
 -- JOIN dept_stats ds ON d.id = ds.id
 WHERE e.salary > (SELECT AVG(salary) FROM employees)
