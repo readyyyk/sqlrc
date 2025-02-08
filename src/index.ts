@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 import { Command } from "commander";
 import { getCodes, getConfig, write } from "./fs.ts";
-import { parseQuery, parseQueryParams, parseSchema, parseResolveResult } from "./parse.ts";
+import { parseQuery, parseQueryParams, parseSchema, parseResolveResult } from "./parse/index.ts";
 import { generateQueryFile, generateSchema } from "./generate";
 import path from "node:path";
 
