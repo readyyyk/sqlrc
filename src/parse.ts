@@ -5,16 +5,17 @@ import {
   isALLOWED_OWN_TYPES,
   isALLOWED_QUERY_RETURN_TYPES,
   isALLOWED_SQL_COLUMN_TYPES,
-  type ParamedQuery,
+  type TParamedQuery,
   type ColumnToken,
-  type QueryToken,
+  type TQueryToken,
   type OwnType,
+  TWResolvedReturnQuery,
 } from "./types.ts";
 
 const SQL_COMMENT_TOKEN = "--@";
 const SQL_DELITMER_TOKEN = ";";
 
-export const parseQuery = (sqlcode: string): QueryToken[] => {
+export const parseQuery = (sqlcode: string): TQueryToken[] => {
   const parts = sqlcode
     .split(SQL_COMMENT_TOKEN)
     .map((a) => a.trim())
@@ -31,7 +32,7 @@ export const parseQuery = (sqlcode: string): QueryToken[] => {
     );
   }
 
-  const result = [] as QueryToken[];
+  const result = [] as TQueryToken[];
   for (const query of sqlParts) {
     const [head, ...rest] = query.split("\n");
     const sql = rest
@@ -128,9 +129,8 @@ const PARAM_REGEX = /(\<\@)([^:]+):([^\@]+)(\@\>)/g
 const NAME_GROUP_IDX = 2;
 const TYPE_GROUP_IDX = 3;
 
-export const parseQueryParams = (queryToken: QueryToken): ParamedQuery => {
-  /** @type {ParamedQuery} */
-  const result: ParamedQuery = {
+export const parseQueryParams = (queryToken: TQueryToken): TParamedQuery => {
+  const result: TParamedQuery = {
     queryToken,
     params: {},
     resultSql: '',
@@ -165,4 +165,83 @@ export const parseQueryParams = (queryToken: QueryToken): ParamedQuery => {
   }
 
   return result;
+}
+
+const getTableName = (sqlString: string): string => {
+  const sqlStringL = sqlString.toLowerCase();
+
+  const kwInsert = "insert into ";
+  const kwUpdate = "update ";
+  const kwDelete = "delete from ";
+  const idxInsert = sqlStringL.indexOf(kwInsert);
+  const idxUpdate = sqlStringL.indexOf(kwUpdate);
+  const idxDelete = sqlStringL.indexOf(kwDelete);
+
+  if (idxInsert !== -1) {
+    return sqlString.slice(idxInsert + kwInsert.length).split(" ")[0];
+  }
+  if (idxUpdate !== -1) {
+    return sqlString.slice(idxUpdate + kwUpdate.length).split(" ")[0];
+  }
+  if (idxDelete !== -1) {
+    return sqlString.slice(idxDelete + kwDelete.length).split(" ")[0];
+  }
+  throw new Error("Cant get table from sql: " + sqlString);
+}
+
+const RETURNING_KW = "returning";
+export const parseResolveResult = (q: TParamedQuery): TWResolvedReturnQuery => {
+  const result: TWResolvedReturnQuery = {
+    ...q,
+    result: {}
+  };
+
+  const woComments = q.resultSql.replaceAll(/--.+[\n\r]/g, "");
+  const woCommentsL = woComments.toLowerCase();
+  if (woCommentsL.startsWith("select")) {
+    // handle select
+    
+  } else {
+    // handle RETURNING keyword
+    const tableName = getTableName(woComments);
+
+    const returningIdx = woCommentsL.lastIndexOf(RETURNING_KW);
+    if (returningIdx === -1) {
+      return result;
+    }
+    const fields = woComments
+      .slice(returningIdx + RETURNING_KW.length)
+      .split(",")
+      .map(a=>a.trim());
+
+    const fieldsWAliases = fields.reduce((acc, cur) => {
+      cur = cur.replace(/ as /i, " ");
+
+      const parts = cur.split(" ");
+      if (parts.length === 1) {
+        return {...acc, [parts[0]]: parts[0]};
+      }
+
+      const alias = parts.at(-1)!;
+      const value = parts.slice(0, -1).join(" ");
+      return {...acc, [alias]: value};
+    }, {} as Record<string, string>);
+
+    for (const [name, value] of Object.entries(fieldsWAliases)) {
+      let field = value;
+      if (!/^[a-zA-Z_0-9]+$/.test(field)) {
+        const foundField = field.match(/[\w^]([a-zA-Z_0-9]+)[\w$]/);
+        if (!foundField) {
+          throw new Error("Field name not found in: " + field);
+        }
+        field = foundField?.[0];
+      }
+      result.result[tableName] = {
+        tableField: field,
+        returningName: name,
+      }
+    }
+  }
+
+  return result
 }

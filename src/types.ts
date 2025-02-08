@@ -10,20 +10,28 @@ export type TConfig = {
   }
 }
 
-export type QueryToken = {
+export type TQueryToken = {
   sql: string;
   name: string;
   type: QueryReturnType;
 };
 
-export type ParamedQuery = {
-    queryToken: QueryToken;
+export type TParamedQuery = {
+    queryToken: TQueryToken;
     params: Record<string, {
         name: string;
         type: OwnType;
         positions: number[];
     }>;
     resultSql: string;
+};
+
+/** @description .result Record<tableName, field> */
+export type TWResolvedReturnQuery = TParamedQuery & {
+  result: Record<string, {
+    tableField: string;
+    returningName: string;
+  }>
 };
 
 

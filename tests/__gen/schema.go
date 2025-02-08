@@ -3,7 +3,7 @@ package gen
 import "database/sql"
 
 type Queries struct {
-  DB sql.DB
+DB sql.DB
 }
 
 type User struct {
