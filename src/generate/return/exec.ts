@@ -1,5 +1,5 @@
 import { TGenerateFunc } from "../utils"
 
-export const generateExec: TGenerateFunc = (query, sqlName, paramsName) => {
+export const generateExec: TGenerateFunc = (query, d) => {
     throw new Error("Not implemented")
 }

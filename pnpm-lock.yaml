@@ -4,12 +4,10 @@ specifiers:
   '@types/node': ^20
   commander: ^13.0.0
   esbuild: ^0.24.2
-  simple-sql-parser: 2.0.0-alpha.1
   typescript: ^5.7.3
 
 dependencies:
   commander: 13.0.0
-  simple-sql-parser: 2.0.0-alpha.1
 
 devDependencies:
   '@types/node': 20.17.17
@@ -286,22 +284,6 @@ packages:
       '@esbuild/win32-ia32': 0.24.2
       '@esbuild/win32-x64': 0.24.2
     dev: true
-
-  /parsimmon/0.7.0:
-    resolution: {integrity: sha512-N+Dg2k/8OeCecfmYCemGXA5GDfr2UrK1FYm0K26oL6wiU57ORCiItfP43vK+5aTJBRdkegYfoOQdyOsOBaSQ/Q==}
-    dependencies:
-      pjs: 5.1.2
-    dev: false
-
-  /pjs/5.1.2:
-    resolution: {integrity: sha512-aoPrjtnYOknat/wiO5hyCkub7LymxSY1BN8gIsW49PfbdPyQiaU+UOo9DfSEhhl48cWLd28IwpERutBveLdQLA==}
-    dev: false
-
-  /simple-sql-parser/2.0.0-alpha.1:
-    resolution: {integrity: sha512-y+Hqc353ncI6xSm+cZhMQQepec8/byRAr21iosqvCTq45SA+Fc60NhSfdMTdfxF2XfNKxRO8RwiPBJu4hmaacQ==}
-    dependencies:
-      parsimmon: 0.7.0
-    dev: false
 
   /typescript/5.7.3:
     resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}

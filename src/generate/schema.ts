@@ -1,7 +1,7 @@
-import { ColumnToken, sqlToGoTypes } from "../types";
+import { sqlToGoTypes, TScehmaToken } from "../types";
 import { capitalize, trimLeftTempl } from "./utils";
 
-type TGenerateSchema = (tokens: Record<string, ColumnToken[]>, packageName: string, removeTrailingS: boolean) => string;
+type TGenerateSchema = (tokens: TScehmaToken, packageName: string, removeTrailingS: boolean) => string;
 export const generateSchema: TGenerateSchema = (tokens, packageName, removeTrailingS) => {
     let result = trimLeftTempl`
         package ${packageName}
@@ -21,10 +21,10 @@ export const generateSchema: TGenerateSchema = (tokens, packageName, removeTrail
     }
 
     let structCode = `\ntype ${structName} struct {`;
-    for (const col of columns) {
+    for (const [name, col] of Object.entries(columns)) {
       // Probably need to add formatting, but dont care until it is valid code
       // Also user may have custom styleguide
-      structCode += `\n${capitalize(col.name)} ${sqlToGoTypes[col.type]} \`db:"${col.name}"\``;
+      structCode += `\n${capitalize(name)} ${sqlToGoTypes[col.type]} \`db:"${name}"\``;
     }
     structCode += "\n}\n";
 

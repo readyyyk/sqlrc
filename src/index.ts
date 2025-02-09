@@ -4,7 +4,6 @@ import { getCodes, getConfig, write } from "./fs.ts";
 import { parseQuery, parseQueryParams, parseSchema, parseResolveResult } from "./parse/index.ts";
 import { generateQueryFile, generateSchema } from "./generate";
 import path from "node:path";
-import { log } from "node:console";
 
 const program = new Command();
 

@@ -11,8 +11,8 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "test:ts": "tsx ./src/index.ts --cfg ./tests/config.json",
-    "test:js": "pnpm run build && ./bin/dist.cjs --cfg ./tests/config.json",
+    "run:ts": "tsx ./src/index.ts --cfg ./example/config.json",
+    "run:js": "pnpm run build && ./bin/dist.cjs --cfg ./example/config.json",
     "build": "./node_modules/.bin/esbuild ./src/index.ts --outfile=./bin/dist.cjs --bundle --minify --platform=node --banner:js='// by @readyyyk'"
   },
   "keywords": [
@@ -20,8 +20,7 @@
   ],
   "license": "BSD 2-Clause License",
   "dependencies": {
-    "commander": "^13.0.0",
-    "simple-sql-parser": "2.0.0-alpha.1"
+    "commander": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

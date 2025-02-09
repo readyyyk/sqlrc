@@ -1,17 +1,6 @@
---@ sqlrc:GetSingle:one
--- TODO check + probably @unsafe directive
-SELECT *
-FROM users
-WHERE <@condition:string@>;
-
---@ sqlrc:InsertSingle:one
-INSERT INTO users (text, fk) VALUES (<@text:string@>, <@fk:string@>) RETURNING id, username, image i;
-
 --@ sqlrc:GetRepeated:one
 SELECT id, walias a, * al FROM users WHERE id = <@id:int@> AND <@id:int@> > 10;
 
---@ sqlrc:GetMany:many
-SELECT users.* FROM users WHERE id < <@id:int@>;
 
 --@ sqlrc:GetJoin:many
 SELECT u.*, f.*
@@ -19,31 +8,6 @@ FROM users as u
 LEFT JOIN friends f
 ON f.id = u.id
 where u.username = <@username:string@>;
-
---@ sqlrc:GetWorthy:one
-SELECT t1.*, tg.texT
-FROM transactions as t1
-  LEFT JOIN tags tg ON tg.transaction_id = t1.id
-WHERE
-  t1.owner_id = <@user_id:string@>
-  AND
-  (t1.id IN (
-    SELECT tags.transaction_id
-    FROM tags tags
-    WHERE
-      tags.user_id = <@user_id:string@>
-      AND
-      tags.text IN (<@cs_tags:string@>)
-  ))
-  AND
-  (t1.created_at > <@min_created_at:string@>)
-  AND
-  (t1.created_at < <@max_created_at:string@>)
-  AND
-  (t1.description LIKE <@description_wk:string@>)
-GROUP BY t1.id
-LIMIT <@limit:int@>
-OFFSET <@offset:int@>;
 
 --@ sqlrc:InsertMultiReturning:one
 INSERT INTO products (name, price)
@@ -60,7 +24,6 @@ RETURNING
     name product_name,
     price * 0.2 tax,
     price * 1.2 as price_with_tax;
-
 
 --@ sqlrc:SelectScaryReturn:many
 -- WITH dept_stats AS (

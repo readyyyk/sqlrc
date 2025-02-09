@@ -1,4 +1,4 @@
-import { ALLOWED_SQL_COLUMN_TYPES, ColumnToken, isALLOWED_SQL_COLUMN_TYPES, TScehmaToken } from "../types";
+import { ALLOWED_SQL_COLUMN_TYPES, isALLOWED_SQL_COLUMN_TYPES, TScehmaToken } from "../types";
 
 const SQL_TABLE_DELITMER = "CREATE";
 const SQL_TABLE_NAME_REGEX = /(TABLE|table)\s+(\w+)/g;
@@ -60,11 +60,16 @@ export const parseSchema = (sqlcode: string): TScehmaToken => {
       }),
   );
 
-  const result: Record<string, ColumnToken[]> = {};
+  const result: TScehmaToken = {};
   for (let i = 0; i < tableNames.length; i++) {
     const tName = tableNames[i];
     const tokens = tablesFields[i];
-    result[tName] = tokens;
+    for (const token of tokens) {
+      if (!result[tName]) {
+        result[tName] = {};
+      }
+      result[tName][token.name] = { type: token.type };
+    }
   }
   return result;
 };

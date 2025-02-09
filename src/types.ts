@@ -34,7 +34,9 @@ export type TWResolvedReturnQuery = TParamedQuery & {
   }>>
 };
 
-export type TScehmaToken = Record<string, ColumnToken[]>;
+export type ColumnToken = { type: ColumnType; };
+
+export type TScehmaToken = Record<string, Record<string, ColumnToken>>;
 
 
 export const ALLOWED_QUERY_RETURN_TYPES = [
@@ -76,8 +78,6 @@ export const isALLOWED_OWN_TYPES = (toCheck: string): toCheck is OwnType => {
 }
 
 export type JSType = "string" | "number"
-
-export type ColumnToken = { name: string; type: ColumnType; };
 
 
 export const sqlToJSTypes: Record<ColumnType, JSType> = {
