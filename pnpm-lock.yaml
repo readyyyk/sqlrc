@@ -2,12 +2,8 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^20
-  commander: ^13.0.0
   esbuild: ^0.24.2
   typescript: ^5.7.3
-
-dependencies:
-  commander: 13.0.0
 
 devDependencies:
   '@types/node': 20.17.17
@@ -246,11 +242,6 @@ packages:
     dependencies:
       undici-types: 6.19.8
     dev: true
-
-  /commander/13.0.0:
-    resolution: {integrity: sha512-oPYleIY8wmTVzkvQq10AEok6YcTC4sRUBl8F9gVuwchGVUCTbl/vhLTaQqutuuySYOsu8YTgV+OxKc/8Yvx+mQ==}
-    engines: {node: '>=18'}
-    dev: false
 
   /esbuild/0.24.2:
     resolution: {integrity: sha512-+9egpBW8I3CD5XPe0n6BfT5fxLzxrlDzqydF3aviG+9ni1lDC/OvMHcxqEFV0+LANZG5R1bFMWfUrjVsdwxJvA==}
