@@ -28,11 +28,13 @@ export type TParamedQuery = {
 
 /** @description .result Record<tableName, field> */
 export type TWResolvedReturnQuery = TParamedQuery & {
-  result: Record<string, {
+  result: Record<string, Array<{
     tableField: string;
     returningName: string;
-  }>
+  }>>
 };
+
+export type TScehmaToken = Record<string, ColumnToken[]>;
 
 
 export const ALLOWED_QUERY_RETURN_TYPES = [

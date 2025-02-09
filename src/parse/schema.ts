@@ -1,11 +1,11 @@
-import { ALLOWED_SQL_COLUMN_TYPES, ColumnToken, isALLOWED_SQL_COLUMN_TYPES } from "../types";
+import { ALLOWED_SQL_COLUMN_TYPES, ColumnToken, isALLOWED_SQL_COLUMN_TYPES, TScehmaToken } from "../types";
 
 const SQL_TABLE_DELITMER = "CREATE";
 const SQL_TABLE_NAME_REGEX = /(TABLE|table)\s+(\w+)/g;
 const SQL_TABLE_NAME_REGEX_GROUP_INDEX = 2;
 
-/** @returns Go <StructureName, <FieldName, FieldType>> */
-export const parseSchema = (sqlcode: string): Record<string, ColumnToken[]> => {
+/** @returns Go <StructureName, <FieldName, sqlFieldType>> */
+export const parseSchema = (sqlcode: string): TScehmaToken => {
   const tableDeclarations = sqlcode
     .replaceAll(/--[^\n]*\n/g, "\n")
     .split(SQL_TABLE_DELITMER)
@@ -60,7 +60,6 @@ export const parseSchema = (sqlcode: string): Record<string, ColumnToken[]> => {
       }),
   );
 
-  /** @type {Record<string, ColumnToken[]>}  */
   const result: Record<string, ColumnToken[]> = {};
   for (let i = 0; i < tableNames.length; i++) {
     const tName = tableNames[i];

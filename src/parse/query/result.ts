@@ -1,7 +1,7 @@
 import { TParamedQuery, TWResolvedReturnQuery } from "../../types";
 import { getTableName } from "./getTableName";
 
-/** @returns Record<alias|columnName, value> */
+/** @returns Record<alias|name, value> */
 const handleFieldAlias = (cur: string): Record<string, string> => {
     cur = cur.replace(/ as /i, " ");
 
@@ -15,7 +15,7 @@ const handleFieldAlias = (cur: string): Record<string, string> => {
     return {[alias]: value};
 }
 
-/** @returns Record<alias|columnName, value> */
+/** @returns Record<alias|name, value> */
 const getFieldsWAliases = (fields: string[]): Record<string, string> =>
     fields.reduce((acc, cur) => ({
         ...acc,
@@ -39,29 +39,33 @@ const handleReturning = (result: TWResolvedReturnQuery, sqlWoComments: string) =
     
     for (const [name, value] of Object.entries(fieldsWAliases)) {
         let field = value;
-        if (!/^[a-zA-Z_0-9]+$/.test(field)) {
-            const foundField = field.match(/(^|\s)([a-zA-Z_0-9]+)(^|\s)/m);
+        if (!/^(\*|[a-zA-Z_0-9]+)$/.test(field)) {
+            const foundField = field.match(/(^|\s)(\*|[a-zA-Z_0-9]+)($|\s)/m);
             if (!foundField) {
                 throw new Error("Field name not found in: " + field);
             }
             field = foundField?.[1];
         }
-        result.result[tableName] = {
+        if (!result.result[tableName]) {
+            result.result[tableName] = [];
+        }
+        result.result[tableName].push({
             tableField: field,
             returningName: name,
-        }
+        });
     }
 }
 
 
 const SELECT_KW = "select";
 const FROM_KW = "from";
-const handleSelect = (result: TWResolvedReturnQuery, sqlWoComments: string): string[] => {
+const handleSelect = (result: TWResolvedReturnQuery, sqlWoComments: string) => {
     const idxSelect = sqlWoComments.toLowerCase().indexOf(SELECT_KW);
     const idxFrom = sqlWoComments.toLowerCase().indexOf(FROM_KW);
     
     const selectFieldsStr = sqlWoComments.slice(idxSelect + SELECT_KW.length, idxFrom);
-    const selectFields = selectFieldsStr.split(",").map(a=>a.trim());
+    const selectFields = selectFieldsStr.split(",").map(a=>a.trim()).filter(Boolean);
+    const selectFieldsWAliases = getFieldsWAliases(selectFields);
 
     // hadnle table aliases, like
     // SELECT u.* FROM users u;
@@ -95,15 +99,62 @@ const handleSelect = (result: TWResolvedReturnQuery, sqlWoComments: string): str
 
     const tablesAliases = getFieldsWAliases(tableFields);
 
-    /// TODO handle fields w table aliases
+    // handle fields w table aliases
 
-    return selectFields;
+    if (Object.entries(tablesAliases).length === 1) {
+        // handle raw column names
+
+        for (const [name, value] of Object.entries(selectFieldsWAliases)) {
+            let field = value;
+            const tableName = Object.entries(tablesAliases)[0][1];
+            if (!/^(\*|[a-zA-Z_0-9]+)$/.test(field)) {
+                const foundField = field.match(/(^|\s)([a-zA-Z_0-9]+\.)?(\*|[a-zA-Z_0-9]+)($|\s)/m);
+                if (!foundField) {
+                    throw new Error("Field name not found in: " + field);
+                }
+                field = foundField?.[3];
+            }
+            if (!result.result[tableName]) {
+                result.result[tableName] = [];
+            }
+            result.result[tableName].push({
+                tableField: field,
+                returningName: field === "*" ? field : name,
+            })
+        }
+
+        return;
+    }
+
+    for (const [name, value] of Object.entries(selectFieldsWAliases)) {
+        let field = value;
+        let tableName = Object.entries(tablesAliases)[0][1];
+
+        if (!/^(\*|[a-zA-Z_0-9]+)$/.test(field)) {
+            const foundField = field.match(/(^|\s)([a-zA-Z_0-9]+\.)?(\*|[a-zA-Z_0-9]+)($|\s)/m);
+            if (!foundField) {
+                throw new Error("Field name not found in: " + field);
+            }
+            field = foundField?.[3];
+            console.assert(!!(foundField?.[3]), "Cant find field, value: ", foundField?.[3], '\nmatched value: ', foundField);
+            const tableAlias = foundField[2].slice(0, -1);
+            tableName = tablesAliases[tableAlias];
+        }
+        if (!result.result[tableName]) {
+            result.result[tableName] = [];
+        }
+        result.result[tableName].push({
+            tableField: field,
+            returningName: field === "*" ? field : name,
+        })
+    }
+    return;
 }
 
 export const parseResolveResult = (q: TParamedQuery): TWResolvedReturnQuery => {
     const result: TWResolvedReturnQuery = {
         ...q,
-        result: {}
+        result: {},
     };
 
     const woComments = q.resultSql.replaceAll(/--.+[\n\r]/g, "");

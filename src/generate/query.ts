@@ -1,8 +1,13 @@
 import { generateExec, generateReturnMany, generateReturnOne } from "./return";
-import { ownToGoTypes, TWResolvedReturnQuery } from "../types";
+import { GoType, ownToGoTypes, TScehmaToken, TWResolvedReturnQuery } from "../types";
 import { capitalize, trimLeftTempl } from "./utils";
 
-export const generateQueryFile = (paramedQueries: TWResolvedReturnQuery[], packageName: string): string => {
+const getResultFields = (q: TWResolvedReturnQuery): Record<string, GoType> => {
+    const result = {} as Record<string, GoType>;
+    return result;
+}
+
+export const generateQueryFile = (paramedQueries: TWResolvedReturnQuery[], schema: TScehmaToken, packageName: string): string => {
     let result = trimLeftTempl`
         package ${packageName}
   

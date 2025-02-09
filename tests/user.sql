@@ -8,10 +8,10 @@ WHERE <@condition:string@>;
 INSERT INTO users (text, fk) VALUES (<@text:string@>, <@fk:string@>) RETURNING id, username, image i;
 
 --@ sqlrc:GetRepeated:one
-SELECT * FROM users WHERE id = <@id:int@> AND <@id:int@> > 10;
+SELECT id, walias a, * al FROM users WHERE id = <@id:int@> AND <@id:int@> > 10;
 
 --@ sqlrc:GetMany:many
-SELECT * FROM users WHERE id < <@id:int@>;
+SELECT users.* FROM users WHERE id < <@id:int@>;
 
 --@ sqlrc:GetJoin:many
 SELECT u.*, f.*
@@ -87,6 +87,6 @@ SELECT
     -- RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS dept_salary_rank
 FROM employees as e
 JOIN departments d ON e.department_id = d.id
--- JOIN dept_stats ds ON d.id = ds.id
+JOIN dept_stats ds ON d.id = ds.id
 WHERE e.salary > (SELECT AVG(salary) FROM employees)
 ORDER BY e.salary DESC;

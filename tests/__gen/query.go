@@ -62,7 +62,7 @@ return &i, err
 
 // GetRepeated
 const GetRepeatedSql = `
-SELECT * FROM users WHERE id = ? AND ? > 10
+SELECT id, walias a, * al FROM users WHERE id = ? AND ? > 10
 `
 
 type GetRepeatedParams struct {
@@ -87,7 +87,7 @@ return &i, err
 
 // GetMany
 const GetManySql = `
-SELECT * FROM users WHERE id < ?
+SELECT users.* FROM users WHERE id < ?
 `
 
 type GetManyParams struct {
@@ -294,7 +294,7 @@ SELECT
     -- RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS dept_salary_rank
 FROM employees as e
 JOIN departments d ON e.department_id = d.id
--- JOIN dept_stats ds ON d.id = ds.id
+JOIN dept_stats ds ON d.id = ds.id
 WHERE e.salary > (SELECT AVG(salary) FROM employees)
 ORDER BY e.salary DESC
 `

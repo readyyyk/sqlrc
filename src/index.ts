@@ -4,6 +4,7 @@ import { getCodes, getConfig, write } from "./fs.ts";
 import { parseQuery, parseQueryParams, parseSchema, parseResolveResult } from "./parse/index.ts";
 import { generateQueryFile, generateSchema } from "./generate";
 import path from "node:path";
+import { log } from "node:console";
 
 const program = new Command();
 
@@ -28,10 +29,10 @@ program
 
       const querySetsTokens = codes.queries.map((q) => parseQuery(q));
       const queriesSetsWParams = querySetsTokens.map(qs => qs.map(parseQueryParams));
-      const qsWResolvedResult = queriesSetsWParams.map(qs=>qs.map(parseResolveResult))
+      const qsWResolvedResult = queriesSetsWParams.map(qs => qs.map(parseResolveResult));
 
       const querySetsContent = qsWResolvedResult.map(
-        qsWParams => generateQueryFile(qsWParams, config.pakage.name)
+        qsWParams => generateQueryFile(qsWParams, schemaTokens, config.pakage.name)
       );
       const queryPath = path.resolve(workDir, config.pakage.path, "query.go"); // TODO replace w actual names
       write(querySetsContent[0], queryPath);
