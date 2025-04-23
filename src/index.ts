@@ -41,7 +41,6 @@ try {
   const queryPath = path.resolve(workDir, config.pakage.path, "query.go"); // TODO replace w actual names
   write(querySetsContent[0], queryPath);
   console.log("✅ Wrote query to "+schemaPath)
-
   // todo: gofmt -w "$(pwd)/internal/db/sqlrc/__gen
 } catch (e) {
   console.error(e);
