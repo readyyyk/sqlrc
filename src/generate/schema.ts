@@ -9,7 +9,7 @@ export const generateSchema: TGenerateSchema = (tokens, packageName, removeTrail
         import "database/sql"
 
         type Queries struct {
-            DB sql.DB
+            DB *sql.DB
         }`.slice(1);
 
   for (const tableName in tokens) {

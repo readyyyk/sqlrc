@@ -1,6 +1,6 @@
 {
   "name": "sqlrc",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "author": "gh@readyyyk",
   "bin": {
     "sqlrc": "./bin/dist.cjs"
@@ -13,7 +13,7 @@
   "scripts": {
     "run:ts": "tsx ./src/index.ts --cfg ./example/config.json",
     "run:js": "pnpm run build && ./bin/dist.cjs --cfg ./example/config.json",
-    "build": "./node_modules/.bin/esbuild ./src/index.ts --outfile=./bin/dist.cjs --bundle --minify --platform=node --banner:js='// by @readyyyk'"
+    "build": "./node_modules/.bin/esbuild ./src/index.ts --outfile=./bin/dist.cjs --bundle --platform=node --banner:js='// by @readyyyk'"
   },
   "keywords": [
     "sql"
