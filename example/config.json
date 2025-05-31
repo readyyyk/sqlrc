@@ -1,9 +1,0 @@
-{
-  "schema": "schema.sql",
-  "queries": ["user.sql"],
-  "remove_trailing_s": true,
-  "pakage": {
-    "name": "gen",
-    "path": "./__gen/"
-  }
-}
