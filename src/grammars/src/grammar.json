@@ -1,0 +1,627 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
+  "name": "extended_sql",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "sqlrc_directive"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "statement"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "comment"
+          }
+        ]
+      }
+    },
+    "sqlrc_directive": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "--@"
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\s*"
+        },
+        {
+          "type": "STRING",
+          "value": "sqlrc:"
+        },
+        {
+          "type": "FIELD",
+          "name": "function_name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "return_type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "one"
+              },
+              {
+                "type": "STRING",
+                "value": "many"
+              },
+              {
+                "type": "STRING",
+                "value": "exec"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "variable_placeholder": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<@"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "@>"
+        }
+      ]
+    },
+    "statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "comment"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "sql_keyword"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "string"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "number"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "operator"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "punctuation"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "variable_placeholder"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "whitespace"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "sql_keyword": {
+      "type": "PREC",
+      "value": "keyword",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "SELECT"
+          },
+          {
+            "type": "STRING",
+            "value": "FROM"
+          },
+          {
+            "type": "STRING",
+            "value": "WHERE"
+          },
+          {
+            "type": "STRING",
+            "value": "JOIN"
+          },
+          {
+            "type": "STRING",
+            "value": "LEFT"
+          },
+          {
+            "type": "STRING",
+            "value": "RIGHT"
+          },
+          {
+            "type": "STRING",
+            "value": "INNER"
+          },
+          {
+            "type": "STRING",
+            "value": "OUTER"
+          },
+          {
+            "type": "STRING",
+            "value": "ON"
+          },
+          {
+            "type": "STRING",
+            "value": "GROUP"
+          },
+          {
+            "type": "STRING",
+            "value": "BY"
+          },
+          {
+            "type": "STRING",
+            "value": "ORDER"
+          },
+          {
+            "type": "STRING",
+            "value": "HAVING"
+          },
+          {
+            "type": "STRING",
+            "value": "LIMIT"
+          },
+          {
+            "type": "STRING",
+            "value": "OFFSET"
+          },
+          {
+            "type": "STRING",
+            "value": "INSERT"
+          },
+          {
+            "type": "STRING",
+            "value": "INTO"
+          },
+          {
+            "type": "STRING",
+            "value": "VALUES"
+          },
+          {
+            "type": "STRING",
+            "value": "UPDATE"
+          },
+          {
+            "type": "STRING",
+            "value": "SET"
+          },
+          {
+            "type": "STRING",
+            "value": "DELETE"
+          },
+          {
+            "type": "STRING",
+            "value": "CREATE"
+          },
+          {
+            "type": "STRING",
+            "value": "TABLE"
+          },
+          {
+            "type": "STRING",
+            "value": "INDEX"
+          },
+          {
+            "type": "STRING",
+            "value": "DROP"
+          },
+          {
+            "type": "STRING",
+            "value": "ALTER"
+          },
+          {
+            "type": "STRING",
+            "value": "ADD"
+          },
+          {
+            "type": "STRING",
+            "value": "COLUMN"
+          },
+          {
+            "type": "STRING",
+            "value": "AND"
+          },
+          {
+            "type": "STRING",
+            "value": "OR"
+          },
+          {
+            "type": "STRING",
+            "value": "NOT"
+          },
+          {
+            "type": "STRING",
+            "value": "NULL"
+          },
+          {
+            "type": "STRING",
+            "value": "TRUE"
+          },
+          {
+            "type": "STRING",
+            "value": "FALSE"
+          },
+          {
+            "type": "STRING",
+            "value": "AS"
+          },
+          {
+            "type": "STRING",
+            "value": "IN"
+          },
+          {
+            "type": "STRING",
+            "value": "BETWEEN"
+          },
+          {
+            "type": "STRING",
+            "value": "LIKE"
+          },
+          {
+            "type": "STRING",
+            "value": "IS"
+          },
+          {
+            "type": "STRING",
+            "value": "EXISTS"
+          },
+          {
+            "type": "STRING",
+            "value": "CASE"
+          },
+          {
+            "type": "STRING",
+            "value": "WHEN"
+          },
+          {
+            "type": "STRING",
+            "value": "THEN"
+          },
+          {
+            "type": "STRING",
+            "value": "ELSE"
+          },
+          {
+            "type": "STRING",
+            "value": "END"
+          },
+          {
+            "type": "STRING",
+            "value": "DISTINCT"
+          },
+          {
+            "type": "STRING",
+            "value": "ALL"
+          },
+          {
+            "type": "STRING",
+            "value": "ANY"
+          },
+          {
+            "type": "STRING",
+            "value": "SOME"
+          },
+          {
+            "type": "STRING",
+            "value": "UNION"
+          },
+          {
+            "type": "STRING",
+            "value": "INTERSECT"
+          },
+          {
+            "type": "STRING",
+            "value": "EXCEPT"
+          },
+          {
+            "type": "STRING",
+            "value": "WITH"
+          }
+        ]
+      }
+    },
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z_][a-zA-Z0-9_]*"
+    },
+    "string": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "'"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[^'\\\\]"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "\\\\."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "'"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\""
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[^\"\\\\]"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "\\\\."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "\""
+            }
+          ]
+        }
+      ]
+    },
+    "number": {
+      "type": "PATTERN",
+      "value": "[0-9]+(\\.[0-9]+)?"
+    },
+    "operator": {
+      "type": "PREC",
+      "value": "operator",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "+"
+          },
+          {
+            "type": "STRING",
+            "value": "-"
+          },
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "STRING",
+            "value": "/"
+          },
+          {
+            "type": "STRING",
+            "value": "%"
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "STRING",
+            "value": "!="
+          },
+          {
+            "type": "STRING",
+            "value": "<>"
+          },
+          {
+            "type": "STRING",
+            "value": "<"
+          },
+          {
+            "type": "STRING",
+            "value": "<="
+          },
+          {
+            "type": "STRING",
+            "value": ">"
+          },
+          {
+            "type": "STRING",
+            "value": ">="
+          },
+          {
+            "type": "STRING",
+            "value": "AND"
+          },
+          {
+            "type": "STRING",
+            "value": "OR"
+          },
+          {
+            "type": "STRING",
+            "value": "NOT"
+          }
+        ]
+      }
+    },
+    "punctuation": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": ";"
+        }
+      ]
+    },
+    "comment": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "--"
+            },
+            {
+              "type": "PATTERN",
+              "value": ".*"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "/*"
+            },
+            {
+              "type": "PATTERN",
+              "value": "(.|\\n)*?\\*\\/"
+            }
+          ]
+        }
+      ]
+    },
+    "whitespace": {
+      "type": "PATTERN",
+      "value": "\\s+"
+    }
+  },
+  "extras": [
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [
+    [
+      "sql_keyword",
+      "operator"
+    ],
+    [
+      "source_file",
+      "statement"
+    ],
+    [
+      "statement",
+      "punctuation"
+    ]
+  ],
+  "precedences": [
+    [
+      {
+        "type": "STRING",
+        "value": "keyword"
+      },
+      {
+        "type": "STRING",
+        "value": "operator"
+      }
+    ]
+  ],
+  "externals": [],
+  "inline": [],
+  "supertypes": [],
+  "reserved": {}
+}
